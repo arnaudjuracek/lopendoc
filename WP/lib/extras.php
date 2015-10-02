@@ -475,8 +475,8 @@ function ajax_create_private_post_with_tax()
 
 				$userid = $_POST['userid'];
 				$newpost = array(
-					'post_title'					=> '-',
-					'post_content'				=> '',
+					'post_title'					=> __('Untitled post', 'opendoc'),
+					'post_content'				=> __('-', 'opendoc'),
 					'post_status'					=> 'private',
 					'post_author'					=> $userid,
 				);
@@ -560,7 +560,7 @@ function ajax_add_tax_term()
 			$leuserid = $_POST['userid'];
 			$leaddDescription = $_POST['add-description'];
 
-			addTermAndCreateDescription( $leprojet, $leuserid, $leaddDescription);
+			echo json_encode( addTermAndCreateDescription( $leprojet, $leuserid, $leaddDescription));
 
     }
 
@@ -569,29 +569,39 @@ function ajax_add_tax_term()
 
 function addTermAndCreateDescription( $projet, $userid, $addDescription) {
 
-	wp_insert_term(
+	if( term_exists($projet, 'projets')) {
+		return __('This name is already taken.', 'opendoc');
+	}
+
+	$term_info = wp_insert_term(
     $projet,
     'projets'
 	);
-	$projetslug = get_term_by( 'name', $projet, 'projets')->slug;
+
+	extract( $term_info);
+	$projetslug = get_term_by( 'id', $term_id, 'projets')->slug;
+	error_log( 'slug : ' . $projetslug);
 
 	// s'il y a un userid, ajouter ce projet à cet userid
 	if( !empty($userid)) {
 		//récupération du slug
 		$hasProjects = get_user_meta( $userid, '_opendoc_user_projets', true );
-		$userProjects = explode(',', $hasProjects);
-		array_push( $userProjects, $projetslug);
-		$hasProjects = implode(",", $userProjects);
-		update_user_meta( $userid, '_opendoc_user_projets', $hasProjects);
+		error_log( 'utilisateur : ' . $userid . ' has project(s) : ' . $hasProjects);
+		if( $hasProjects !== '') {
+			$userProjects = explode('|', $hasProjects);
+			array_push( $userProjects, $projetslug);
+			$hasProjects = implode('|', $userProjects);
+			update_user_meta( $userid, '_opendoc_user_projets', $hasProjects);
+		} else {
+			update_user_meta( $userid, '_opendoc_user_projets', $projetslug);
+		}
 	}
 
 	// et créer un post description pour ce projet
 	if( !empty($addDescription)) {
 
 		if( $addDescription == true) {
-
 			error_log('ajout projet description');
-
 			$newpost = array(
 				'post_title'					=> $projet,
 				'post_content'				=> __('No content for this project yet.', 'opendoc'),
@@ -602,8 +612,11 @@ function addTermAndCreateDescription( $projet, $userid, $addDescription) {
 			$newpostID = wp_insert_post( $newpost);
 			wp_set_object_terms( $newpostID, $projetslug, 'projets');
 			wp_set_object_terms( $newpostID, $userid, 'auteur');
+			return "success";
 		}
 	}
+
+	return "success";
 
 }
 
@@ -641,7 +654,7 @@ function ajax_edit_projet_authors()
 			  foreach ($users as $user) {
 					$userid = $user->ID;
 					$hasProjects = get_user_meta( $userid, '_opendoc_user_projets', true );
-					$userProjects = explode(',', $hasProjects);
+					$userProjects = explode('|', $hasProjects);
 
 					// si dans la liste des projets existants d'un user il y a projet, alors
 					if( in_array( $projet, $userProjects)) {
@@ -652,7 +665,7 @@ function ajax_edit_projet_authors()
 							// mais si son ID n'y est pas, c'est qu'il ne doit plus avoir ce projet
 							$pos = array_search($projet, $userProjects);
 							unset($userProjects[$pos]);
-							$hasProjects = implode(",", $userProjects);
+							$hasProjects = implode("|", $userProjects);
 							update_user_meta( $userid, '_opendoc_user_projets', $hasProjects);
 						}
 
@@ -661,7 +674,7 @@ function ajax_edit_projet_authors()
 						// et qu'il est mentionné dans les auteurs à ajouter
 						if( in_array( $userid, $newAuthorsArray)) {
 							array_push( $userProjects, $projet);
-							$hasProjects = implode(",", $userProjects);
+							$hasProjects = implode("|", $userProjects);
 							update_user_meta( $userid, '_opendoc_user_projets', $hasProjects);
 						}
 					}
@@ -764,7 +777,7 @@ function can_user_edit_project() {
 	if( $term != '') {
 		$currentuserid = wp_get_current_user()->ID;
 		$hasProjects = get_user_meta( $currentuserid, '_opendoc_user_projets', true );
-		$userProjects = explode(',', $hasProjects);
+		$userProjects = explode('|', $hasProjects);
 
 		if( in_array( $term, $userProjects)) {
 			$GLOBALS["editor"] = true;
@@ -776,12 +789,12 @@ function can_user_edit_project() {
 
 function can_user_edit_this_project($projet) {
 
-	error_log( "-- is authorized ?");
+//	error_log( "-- is authorized ?");
 
 	if( !isset($GLOBALS["listeProjet"])) {
 		$currentuserid = wp_get_current_user()->ID;
 		$hasProjects = get_user_meta( $currentuserid, '_opendoc_user_projets', true );
-		$userProjects = explode(',', $hasProjects);
+		$userProjects = explode('|', $hasProjects);
 		$GLOBALS["listeProjet"] = $userProjects;
 	}
 

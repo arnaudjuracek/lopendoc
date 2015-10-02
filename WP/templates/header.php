@@ -56,7 +56,7 @@
 						<?php echo custom_bloginfo(); ?>
 	        </div>
 	        <div class="lopendocProjet">
-						<?php echo roots_title( ); ?>
+						<?php //echo roots_title( ); ?>
 					</div>
 	      </a>
 	    </div>
@@ -65,43 +65,46 @@
 					<div class="actionsContainer">
 						<div class="dropdown">
 							<?php
-								if( !is_user_logged_in()) {
-									?>
-								  <button class="action-button actions login-field" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-											<?php
-												_e('Register/login', 'opendoc');
-											?>
-								  </button>
-									<?php
-								} else {
-									?>
-								  <button class="action-button actions dropdown-toggle is--loggedin" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-											<?php
-												global $current_user;
-												echo "$current_user->user_login";
-											?>
-								    <span class="caret"></span>
-								  </button>
-								  <ul class="dropdown-menu dropdown-menu-right login-list" aria-labelledby="dropdownMenu1">
-											<?php
-											if (user_can_edit()) {
-												?>
-											<li class="action-button switch-edition">
-												<?php _e('Edit mode', 'opendoc'); ?>
-											</li>
-											<li class="action-button refresh-postie">
-												<?php _e('Get mails', 'opendoc'); ?>
-											</li>
-										<?php
-											}
-										?>
-										<li class="action-button deconnexion-field">
-											<?php _e('Logout', 'opendoc'); ?>
-										</li>
-								  </ul>
-								  <?php
-								}
+							if( !is_user_logged_in()) {
 								?>
+							  <button class="action-button actions login-field" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+										<?php
+											_e('Register/login', 'opendoc');
+										?>
+							  </button>
+								<?php
+							} else {
+								?>
+							  <button class="action-button actions dropdown-toggle is--loggedin" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+										<?php
+											global $current_user;
+											echo "$current_user->user_login";
+										?>
+							    <span class="caret"></span>
+							  </button>
+							  <ul class="dropdown-menu dropdown-menu-right login-list" aria-labelledby="dropdownMenu1">
+									<?php
+									if (user_can_edit()) {
+										?>
+										<li class="action-button switch-edition">
+											<?php _e('Edit mode', 'opendoc'); ?>
+										</li>
+										<?php
+									}
+									if( current_user_can( 'edit_posts' )) {
+									?>
+										<li class="action-button refresh-postie">
+											<?php _e('Get mails', 'opendoc'); ?>
+										</li>
+										<?php
+									} ?>
+									<li class="action-button deconnexion-field">
+										<?php _e('Logout', 'opendoc'); ?>
+									</li>
+							  </ul>
+								<?php
+							}
+							?>
 						</div>
 					</div>
 	    </nav>

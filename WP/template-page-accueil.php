@@ -4,19 +4,19 @@ Template Name: Accueil avec cartes
 */
 ?>
 
-<header id="presentationActions">
-	<div class='colTitle'>
-		<h1>
-			<?php echo roots_title( ); ?>
-		</h1>
-	</div>
-
-	<?php if( get_post()->post_content != '') { ?>
-		<div class="pageText">
-			<?php echo( get_post()->post_content); ?>
+<?php while (have_posts()) : the_post(); ?>
+	<header id="presentationActions">
+		<div class='colTitle'>
+			<h1>
+				<?php echo roots_title(); ?>
+			</h1>
 		</div>
-	<?php } ?>
-</header>
+		<div class="pageText">
+			<?php the_content(); ?> <!-- Page Content -->
+    </div>
+	</header>
+<?php endwhile; ?>
+<?php wp_reset_query(); ?>
 
 <main class="main" role="main">
 	<!-- barre du haut de la page -->
@@ -24,14 +24,14 @@ Template Name: Accueil avec cartes
 
 		<div class='sort-list'>
 			<div class="legende">
-		  	<?php	_e("sort projects by&nbsp;: ", 'opendoc'); ?>
+		  	<?php	_e("sort projects by: ", 'opendoc'); ?>
 			</div>
 			<div class="contenu">
 				<span class="sort-term" data-type="edited">
-			  	<?php	_e("edited", 'opendoc'); ?>
+			  	<?php	_e("last modified", 'opendoc'); ?>
 				</span>
 				<span class="sort-term" data-type="created">
-			  	<?php	_e("created", 'opendoc'); ?>
+			  	<?php	_e("last created", 'opendoc'); ?>
 				</span>
 				<span class="sort-term" data-type="ab">
 		  		<?php	_e("alphabetical", 'opendoc'); ?>
@@ -41,18 +41,28 @@ Template Name: Accueil avec cartes
 
 		<div class="edit-all-project">
 
-			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-				 viewBox="0 0 64.5 64.5" style="enable-background:new 0 0 64.5 64.5;" xml:space="preserve" class="options add-project">
-				<polygon style="fill:#FCB421;" points="55.2,36.2 49.6,50.1 34,54.8 9,49.3 9,29.9 19.3,17.2 34.4,10 48.9,25.6 	"/>
-				<path style="fill:#EF474B;" d="M10.2,10.3C-2,22.5-2,42.3,10.2,54.5c12.2,12.2,31.9,12.2,44.1,0c12.2-12.2,12.2-31.9,0-44.1
-					C42.1-1.8,22.4-1.8,10.2,10.3z M50.2,28.5l0,7.8l-14,0l0,14h-7.8l0-14l-14,0l0-7.8l14,0l0-14l7.8,0l0,14H50.2z"/>
-			</svg>
+			<?php if (current_user_can( 'edit_posts')) { ?>
+				<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+					 viewBox="0 0 64.5 64.5" style="enable-background:new 0 0 64.5 64.5;" xml:space="preserve" class="options add-project"
+
+				  data-toggle="tooltip" data-placement="bottom" title="<?php _e('Add a project', 'opendoc'); ?>" data-toggle-tooltip-color="#ef474b"
+
+					 >
+					<polygon style="fill:#FCB421;" points="55.2,36.2 49.6,50.1 34,54.8 9,49.3 9,29.9 19.3,17.2 34.4,10 48.9,25.6 	"/>
+					<path style="fill:#EF474B;" d="M10.2,10.3C-2,22.5-2,42.3,10.2,54.5c12.2,12.2,31.9,12.2,44.1,0c12.2-12.2,12.2-31.9,0-44.1
+						C42.1-1.8,22.4-1.8,10.2,10.3z M50.2,28.5l0,7.8l-14,0l0,14h-7.8l0-14l-14,0l0-7.8l14,0l0-14l7.8,0l0,14H50.2z"/>
+				</svg>
+			<?php } ?>
 
 			<!-- Generator: Adobe Illustrator 19.1.0, SVG Export Plug-In  -->
 			<svg version="1.1"
 				 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
 				 x="0px" y="0px" viewBox="0 0 62.6 62.6" style="enable-background:new 0 0 62.6 62.6;"
-				 xml:space="preserve" class="options open-search">
+				 xml:space="preserve" class="options open-search"
+
+			  data-toggle="tooltip" data-placement="bottom" title="<?php _e('Search on l\'Opendoc', 'opendoc'); ?>" data-toggle-tooltip-color="#fcb421"
+
+				 >
 			<defs>
 			</defs>
 			<path style="fill:#FCB421;" d="M9.3,9.3c-12.2,12.2-12.2,31.9,0,44.1c12.2,12.2,31.9,12.2,44.1,0c12.2-12.2,12.2-31.9,0-44.1
@@ -71,6 +81,7 @@ Template Name: Accueil avec cartes
 	<!-- barre sur le côté de la page -->
 	<div id="colonnesOptionsSidebar">
 
+<!--
 		<div class="module-side topIcons">
 			<div class="legende">
 		  	<?php	_e("Actions: ", 'opendoc'); ?>
@@ -86,11 +97,14 @@ Template Name: Accueil avec cartes
 				</button>
 			</div>
 		</div>
+-->
 
 		<div class="module-side category-list category-filters">
+<!--
 			<div class="legende">
 		  	<?php	_e("Filter by categories: ", 'opendoc'); ?>
 			</div>
+-->
 			<div class="contenu">
 			</div>
 		</div>
@@ -105,7 +119,7 @@ Template Name: Accueil avec cartes
 			</p>
 
 	    <input type="text" name="userInput" id="projectName">
-	    <button>
+	    <button data-submitted="<?php  _e('Adding…', 'opendoc'); ?>">
 				<?php _e('Add the project', 'opendoc'); ?>
 	    </button>
 		</div>
@@ -163,6 +177,7 @@ Template Name: Accueil avec cartes
 			$timeCreated = '';
 
 			$descriptionPostID = -1;
+			$descriptionTitle = '';
 
 			if ( $get_description->have_posts() ) {
 				// The Loop
@@ -174,6 +189,7 @@ Template Name: Accueil avec cartes
 					$timeCreated = get_the_date('U');
 					$lastPostDate = get_the_modified_date('U');
 					$lastPostDateHuman = get_the_modified_date('d/m/Y');
+					$descriptionTitle = get_the_title();
 
 				endwhile;
 			}
@@ -182,6 +198,10 @@ Template Name: Accueil avec cartes
 	    $term_name = $term->name;
 	    $term_slug = $term->slug;
 	    $term_count = $term->count;
+
+	    // override de $term_name avec le titre de la description si elle existe
+	    if( $descriptionTitle !== '')
+	    	$term_name = $descriptionTitle;
 
 	    // calculer lastpostdate en partant de now
 	    $nowts = current_time('U');
@@ -197,7 +217,6 @@ Template Name: Accueil avec cartes
 				<?php if( $timeCreated != '') { 					 	echo " data-timecreated='$timeCreated'"; } ?>
 				<?php if( $term_name != '') { 							echo " data-name='" . strtoupper( $term_name) . "'"; } ?>
 				<?php if( has_post_thumbnail()) { 	 				echo " data-hasthumb "; } ?>
-				<?php if( $term_count != '') { 							echo " data-count='" . $term_count . "'"; } ?>
 					>
 				<section  class="colonnes" >
 
@@ -280,35 +299,45 @@ Template Name: Accueil avec cartes
 													$content = apply_filters( 'the_content', $description_content );
 													echo str_replace( ']]>', ']]&gt;', $content );
 												}
+												unset( $description_content);
 											?>
 										</div><!-- .entry-content -->
 
 										<?php if( $lastPostDateHuman !== '' || isset($hascategory) ) { ?>
 											<div class="entry-meta">
+												<?php if( $term_count !== '') { ?>
+													<div class="metablock">
+														<div class="legende">
+															<?php _e('Articles count:', 'opendoc'); ?>
+														</div>
+														<div class="contenu">
+															<?php echo $term_count; ?>
+														</div>
+													</div>
+												<?php } ?>
 												<?php if( $lastPostDateHuman !== '') { ?>
-													<time class="metablock half modDate edited" datetime="<?php echo get_the_modified_time('c'); ?>"
+													<div class="metablock half modDate edited"
 													data-toggle="tooltip" data-placement="top" title="<?php echo get_the_modified_time(''); ?>" data-toggle-tooltip-color="#3C3C3C">
 														<div class="legende">
 															<?php _e('Edited: ', 'opendoc'); ?>
 														</div>
-														<div class="contenu">
+														<time class="contenu" datetime="<?php echo get_the_modified_time('c'); ?>">
 															<?php echo $lastPostDateHuman;?>
-														</div>
-													</time>
+														</time>
+													</div>
 												<?php } ?>
 												<?php if( $createdDateHuman !== '') { ?>
-													<time class="metablock half createdDate added" datetime="<?php echo get_the_time('c'); ?>"
+													<div class="metablock half createdDate added" datetime="<?php echo get_the_time('c'); ?>"
 													data-toggle="tooltip" data-placement="top" title="<?php echo get_the_time(''); ?> " data-toggle-tooltip-color="#3C3C3C"
 													>
 														<div class="legende">
 															<?php _e('Created: ', 'opendoc'); ?>
 														</div>
-														<div class="contenu">
+														<time class="contenu">
 															<?php echo $createdDateHuman;?>
-														</div>
-													</time>
+														</time>
+													</div>
 												<?php } ?>
-
 
 												<?php
 													if( isset($hascategory)) {
